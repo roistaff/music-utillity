@@ -17,7 +17,7 @@ case $1 in
 				query=""
 				;;
 		esac
-		echo "Search with ${query}"
+		echo "Query: ${query}"
 		query=$(echo "${query}" | jq -Rr @uri)
 		list=$(curl  -s "https://lrclib.net/api/search?q=${query}" | jq '.[] | {title: .name, artist: .artistName}' | jq -r '"\(.title) | \(.artist)"')
 		findquery=$(echo "${list}" | gum choose)
@@ -25,7 +25,7 @@ case $1 in
 		artist=$(echo ${findquery} | cut -d '|' -f 2 | jq -Rr @uri)
 		hoge=$(curl -s "https://lrclib.net/api/get?track_name=${title}&artist_name=${artist}" | jq -r '.plainLyrics')
 		echo -e "\n"
-		echo -e "${hoge}"
+		echo -e "${hoge}" | bat
 		;;
 	*)
 		echo "need help?"
