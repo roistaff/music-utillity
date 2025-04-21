@@ -20,7 +20,12 @@ case $1 in
 		echo "Search with ${query}"
 		query=$(echo "${query}" | jq -Rr @uri)
 		list=$(curl  -s "https://lrclib.net/api/search?q=${query}" | jq '.[] | {title: .name, artist: .artistName}' | jq -r '"\(.title) | \(.artist)"')
-		echo "${list}" | gum choose
+		findquery=$(echo "${list}" | gum choose)
+		title=$(echo ${findquery} | cut -d '|' -f 1 | jq -Rr @uri)
+		artist=$(echo ${findquery} | cut -d '|' -f 2 | jq -Rr @uri)
+		hoge=$(curl -s "https://lrclib.net/api/get?track_name=${title}&artist_name=${artist}" | jq -r '.plainLyrics')
+		echo -e "\n"
+		echo -e "${hoge}"
 		;;
 	*)
 		echo "need help?"
